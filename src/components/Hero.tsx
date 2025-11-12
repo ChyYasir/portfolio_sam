@@ -83,20 +83,25 @@ export default function Hero() {
             transition={{ duration: 0.8, delay: 0.4 }}
           >
             <div className="relative">
-              {/* Decorative Background Circle */}
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+              {/* Decorative Background Glow */}
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-300 to-purple-500 rounded-full blur-3xl opacity-30 animate-pulse"></div>
 
-              {/* Profile Image Container */}
+              {/* Profile Image Container with Gradient Border */}
               <div className="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96">
-                <div className="absolute inset-0 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full"></div>
-                <div className="absolute inset-2 bg-white rounded-full overflow-hidden shadow-2xl">
-                  <Image
-                    src="/images/profile.jpg"
-                    alt="Ishraq Samiha"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
+                {/* Gradient Border */}
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 rounded-full p-1.5">
+                  {/* Inner container matching hero background */}
+                  <div className="relative w-full h-full rounded-full bg-gradient-to-br from-purple-100 via-purple-50 to-white overflow-hidden shadow-2xl">
+                    <Image
+                      src="/images/profile.png"
+                      alt="Ishraq Samiha"
+                      fill
+                      sizes="(max-width: 768px) 256px, (max-width: 1024px) 320px, 384px"
+                      className="object-cover scale-100"
+                      style={{ objectPosition: "center center" }}
+                      priority
+                    />
+                  </div>
                 </div>
               </div>
             </div>
