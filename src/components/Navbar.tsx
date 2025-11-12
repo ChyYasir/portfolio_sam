@@ -18,14 +18,40 @@ const navItems = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+
+      // Determine active section based on scroll position
+      const sections = navItems.map((item) => item.href.substring(1)); // Remove '#' from href
+      const scrollPosition = window.scrollY + 100; // Offset for better UX
+
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sections[i]);
+        if (section) {
+          const sectionTop = section.offsetTop;
+          const sectionBottom = sectionTop + section.offsetHeight;
+
+          if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+            setActiveSection(sections[i]);
+            break;
+          }
+        }
+      }
     };
+
+    handleScroll(); // Call once on mount
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleNavClick = (href: string) => {
+    setIsOpen(false);
+    const sectionId = href.substring(1);
+    setActiveSection(sectionId);
+  };
 
   return (
     <nav
@@ -42,22 +68,34 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-gray-700 hover:text-purple-600 transition-colors duration-300 font-medium"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <div className="hidden md:flex space-x-1">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.href.substring(1);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={`relative px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    isActive
+                      ? "text-white"
+                      : "text-gray-700 hover:text-purple-600 hover:bg-purple-50"
+                  }`}
+                >
+                  {/* Active background with smooth transition */}
+                  {isActive && (
+                    <span className="absolute inset-0 bg-purple-600 rounded-lg transition-all duration-300 -z-10"></span>
+                  )}
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-purple-700"
+            className="md:hidden text-purple-700 z-50"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
@@ -65,17 +103,24 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden mt-4 pb-4 space-y-3">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setIsOpen(false)}
-                className="block text-gray-700 hover:text-purple-600 transition-colors duration-300 font-medium py-2"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <div className="md:hidden mt-4 pb-4 space-y-1">
+            {navItems.map((item) => {
+              const isActive = activeSection === item.href.substring(1);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => handleNavClick(item.href)}
+                  className={`block px-4 py-3 rounded-lg font-medium transition-all duration-300 ${
+                    isActive
+                      ? "bg-purple-600 text-white shadow-md"
+                      : "text-gray-700 hover:bg-purple-50 hover:text-purple-600"
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
